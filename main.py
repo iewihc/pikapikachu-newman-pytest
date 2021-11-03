@@ -4,9 +4,9 @@ import subprocess
 
 import pika
 
-json_path = './EC.postman_collection.json'
+json_path = './src/EC.postman_collection.json'
 # json原文件
-json_path1 = './EC.postman_collection1.json'
+json_path1 = './src/EC.postman_collection1.json'
 # 修改json文件後保存的路徑
 
 dict = {}
@@ -21,7 +21,7 @@ def empty_carts(name):
     channel.basic_publish(exchange='',
                           routing_key='[ShoppingCart] Empty Shopping Cart',
                           body=name)
-    print(" ✔️✔️✔️ Sent [ShoppingCart] Empty Shopping Cart")
+    print("🥺 Sent [ShoppingCart] Empty Shopping Cart")
     connection.close()
 
 
@@ -62,7 +62,7 @@ def write_json_data(dict):
 # 關閉json寫模式
 
 def execute_newman():
-    completed = subprocess.Popen(["powershell", "-Command", ' newman run EC.postman_collection1.json --insecure '],
+    completed = subprocess.Popen(["powershell", "-Command", f' newman run {json_path1} --insecure '],
                                  shell=True, stdout=subprocess.PIPE)
     stdout, _ = completed.communicate(timeout=20)
     consoleResult = stdout.decode(encoding="utf8")
@@ -85,7 +85,7 @@ def execute_prom(orderId):
                         routing_key='[Order] Calculate Order Discount',
                         body=orderId)
                         
-    print(f" ✔️✔️✔️ [Order] Calculate Order Discount : {orderId}")
+    print(f"🥺 [Order] Calculate Order Discount : {orderId}")
     connection.close()
 
 
@@ -123,8 +123,6 @@ def doWork(data):
     orderId = execute_newman()
     if orderId!='':
         execute_prom(orderId)
-        
-    
 
 
 if __name__ == '__main__':
