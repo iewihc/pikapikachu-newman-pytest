@@ -1,0 +1,1 @@
+newman run EC.postman_collection.json --insecure

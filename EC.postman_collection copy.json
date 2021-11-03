@@ -1,0 +1,169 @@
+{
+	"info": {
+		"_postman_id": "9ccd0e5c-7884-4f17-b827-2b61cd712239",
+		"name": "EC",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "登入",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"回傳成功 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"測試存入token\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.globals.set(\"token\", jsonData.data.userToken);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"data\": {\r\n    \"id\": \"wei\",\r\n    \"password\": \"12345678\"\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5001/Auth/sales/login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"Auth",
+						"sales",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Carts",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": null
+			},
+			"response": []
+		},
+		{
+			"name": "新增購物車測試資料",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var arrangedData = [\r",
+							"    {\"goodsId\":\"2839796000161\",\"quantity\":2},\r",
+							"    {\"goodsId\":\"2839796000041\",\"quantity\":3},\r",
+							"    {\"goodsId\":\"2839796000211\",\"quantity\":4},\r",
+							"]\r",
+							"\r",
+							"arrangedData.forEach(function(item, i) {\r",
+							"  var data = { data : item};\r",
+							"  data = JSON.stringify(data);\r",
+							"  pm.sendRequest({\r",
+							"        url : \"https://localhost:5001/Carts\",\r",
+							"        method : \"POST\",\r",
+							"        header: {\r",
+							"            'Authorization': 'bearer ' + pm.globals.get(\"token\"),\r",
+							"            \"Content-Type\": \"application/json\"\r",
+							"        },\r",
+							"        body : data\r",
+							"    }, function (err, response) {\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"成功獲取訂單\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"\r",
+							"      pm.sendRequest({\r",
+							"        url : \"https://localhost:5001/Checkout\",\r",
+							"        method : \"POST\",\r",
+							"        header: {\r",
+							"            'Authorization': 'bearer ' + pm.globals.get(\"token\"),\r",
+							"            \"Content-Type\": \"application/json\"\r",
+							"        },\r",
+							"        body : {}\r",
+							"    }, function (err, response) {\r",
+							"        var json = response.json();\r",
+							"        console.log(\"訂單編號:\", json.data );\r",
+							"        \r",
+							"    });\r",
+							"    // pm.globals.set(\"orderId\", \"\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:5001/Carts",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"Carts"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
