@@ -27,6 +27,7 @@
 							"\r",
 							"pm.test(\"測試存入token\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
+							"    console.log('token:',jsonData.data.userToken)\r",
 							"    pm.globals.set(\"token\", jsonData.data.userToken);\r",
 							"});\r",
 							""
