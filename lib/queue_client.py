@@ -3,7 +3,7 @@ import uuid
 
 import pika
 from rich.console import Console
-from rich.table import Column, Table
+from rich.table import Table
 
 
 class QueueClient(object):
