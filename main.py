@@ -159,7 +159,7 @@ class PromotionFlow():
 
             print('==================After')
             self.beautiful_after_order_output(a['data']['goodsInfo'])
-            return a['data']['goodsInfo']
+            return a['data']['goodsInfo']['goods']
 
 
 class GetCase(PromotionFlow):
