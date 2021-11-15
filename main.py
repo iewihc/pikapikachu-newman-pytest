@@ -81,7 +81,7 @@ class PromotionFlow():
         the_revised_dict = self.get_json_data(template)
         self.write_json_data(the_revised_dict)
 
-    def beautiful_order_output(self, obj):
+    def beautiful_after_order_output(self, obj):
         console = Console()
         table = Table(show_header=True, header_style="bold magenta")
         table.add_column("GoodsId", style="dim")
@@ -95,6 +95,17 @@ class PromotionFlow():
                 f"{item['goodsId']}", f"{item['quantity']}", f"{item['amount']}", f"{item['promotionId']}",
                 f"{item['promotionName']}"
             )
+
+        console.print(table)
+
+    def beautiful_before_order_output(self, data):
+        console = Console()
+        table = Table(show_header=True, header_style="bold magenta")
+        table.add_column("GoodsId", style="dim")
+        table.add_column("Qty")
+        for item in data:
+            # print(item)
+            table.add_row(item['goodsId'], str(item['quantity']))
 
         console.print(table)
 
@@ -116,7 +127,11 @@ class PromotionFlow():
         response = requests.request("POST", url, headers=headers, data=json.dumps(payload), verify=False)
         self.token = response.json()['data']['userToken']
 
-    def do_work(self, data):
+    def do_work(self, data, index=0):
+        print('案例', index)
+        print('==================Before')
+        self.beautiful_before_order_output(data)
+
         self.request_api_token()
         # 清除購物車
         self.mq_empty_carts()
@@ -142,14 +157,65 @@ class PromotionFlow():
                 item['promotionName'] = promotionName
                 param = item
 
-            print('==================顯示販促結果')
-            self.beautiful_order_output(a['data']['goodsInfo'])
+            print('==================After')
+            self.beautiful_after_order_output(a['data']['goodsInfo'])
+            return a['data']['goodsInfo']
+
+
+class GetCase(PromotionFlow):
+    def __init__(self):
+        super(GetCase, self).__init__()
+        print('滿足Case1,Case2的第N件測試資料')
+
+    @staticmethod
+    def get_case1():
+        return [
+            {"goodsId": "2823563800061 ", "quantity": 5},
+            {"goodsId": "2824480000311 ", "quantity": 1},
+        ]
+
+    @staticmethod
+    def get_case2():
+        return [
+            {"goodsId": "2823563800061 ", "quantity": 1},
+            {"goodsId": "2824480000311 ", "quantity": 1},
+        ]
+
+    @staticmethod
+    def get_case3():
+        return [
+            {"goodsId": "2823563800061 ", "quantity": 5},
+            {"goodsId": "2824480000311 ", "quantity": 24},
+        ]
+
+    @staticmethod
+    def get_case4():
+        return [
+            {"goodsId": "2823563800061 ", "quantity": 6},
+            {"goodsId": "2824480000311 ", "quantity": 24},
+        ]
+
+    @staticmethod
+    def get_case5():
+        return [
+            {"goodsId": "2823563800061 ", "quantity": 6},
+            {"goodsId": "2824480000311 ", "quantity": 23},
+        ]
+
+    @staticmethod
+    def get_case6():
+        return [
+            {"goodsId": "2823563800061 ", "quantity": 5},
+            {"goodsId": "2824480000311 ", "quantity": 24},
+            {"goodsId": "2111108183101 ", "quantity": 1},
+        ]
 
 
 if __name__ == '__main__':
     p = PromotionFlow()
-    p.do_work([
-        {"goodsId": "2724730100361 ", "quantity": 2},
-        {"goodsId": "2823563800061 ", "quantity": 6},
-        {"goodsId": "2113121000091", "quantity": 1},
-    ])
+    p.do_work(GetCase.get_case1(), 1)
+    p.do_work(GetCase.get_case2(), 2)
+    p.do_work(GetCase.get_case3(), 3)
+    p.do_work(GetCase.get_case4(), 4)
+    p.do_work(GetCase.get_case5(), 5)
+    p.do_work(GetCase.get_case6(), 6)

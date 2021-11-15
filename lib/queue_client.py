@@ -42,12 +42,13 @@ class QueueClient(object):
         if self.corr_id == props.correlation_id:
             self.response = body
 
-    def call(self, body, queueName='', executeAlias=''):
+    def call(self, body, queueName='', executeAlias='', isDebug=False):
         if queueName != '':
             self._queueName = queueName
         self.response = None
         self.corr_id = str(uuid.uuid4())
-        self.beautiful_mq_output([self._queueName, executeAlias, body])
+        if isDebug:
+            self.beautiful_mq_output([self._queueName, executeAlias, body])
         self.channel.basic_publish(
             exchange='',
             routing_key=self._queueName,
